@@ -1,7 +1,3 @@
-Got it! Here's an updated version of the README, with a dedicated **Development Environment Startup** section and the updated PostgreSQL environment variable (`DATABASE_URL`) as requested.
-
----
-
 # 📊 Sentiment Analysis and Summarization Platform
 
 ## 🚀 Overview
