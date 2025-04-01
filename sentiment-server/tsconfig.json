@@ -1,0 +1,11 @@
+{
+  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist", // Output directory for compiled files
+    "noEmit": false // Ensure TypeScript emits compiled files
+  }
+}

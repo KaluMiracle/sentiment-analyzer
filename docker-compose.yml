@@ -1,0 +1,74 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sentiment
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: server
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/sentiment
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  sentiment-client:
+    build:
+      context: ./sentiment-client
+      dockerfile: Dockerfile
+    container_name: sentiment-client
+    environment:
+      REACT_APP_API_URL: http://localhost:3000
+    ports:
+      - "3001:3000"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./sentiment-client:/app
+      - /app/node_modules
+
+  summarization-api:
+    build:
+      context: ./summarization-api
+      dockerfile: Dockerfile
+    container_name: summarization-api
+    environment:
+      PORT: 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./summarization-api:/app
+
+  prisma:
+    image: node:18
+    container_name: prisma
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    command: >
+      sh -c "
+      npm install &&
+      npx prisma generate &&
+      npx prisma migrate deploy"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
